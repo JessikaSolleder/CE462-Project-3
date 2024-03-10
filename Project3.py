@@ -1,53 +1,26 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import tkinter as tk
+from tkinter import messagebox
 
 # Constants
 gamma_soil = 18  # kN/m^3, unit weight of soil
-K0 = 0.5  # At-rest earth pressure coefficient, placeholder value
 
 def calculate_embedment_depth_and_moment(height, phi, c):
-# Calculate the required embedment depth and maximum moment
-#for a cantilever sheet pile in soil.
-    
-# :param height: Height of the sheet pile in feet
-# :param phi: Angle of internal friction of granular soil in degrees
-# :param c: Cohesion of clay soil in kPa
-# :return: Embedment depth (m) and maximum moment (kNm)
-   
-    # Check if sheet pile height is too tall
-    if height > 6.000001:  # 20 feet in meters
-        return "Sheet pile height exceeds cantilever limit (6 meters)", 0
-    
-    # Calculate lateral earth pressure coefficients using Rankine's theory
+    if height > 6.1:  # Corrected for clarity: 6.1 meters is approximately 20 feet
+        messagebox.showerror("Error", "Sheet pile height exceeds cantilever limit (6 meters)")
+        return None, None
     phi_rad = np.radians(phi)
-    Ka = np.tan(np.pi/4 - phi_rad/2)**2  # Active earth pressure coefficient
-    
-    # For simplicity, assuming a uniform soil condition below the excavation depth
-    # Calculate required embedment depth
+    Ka = np.tan(np.pi/4 - phi_rad/2)**2
     D = height * (2 * Ka)  # Simplified assumption
-    
-    # Calculate maximum moment
     M_max = 0.5 * gamma_soil * Ka * height**2 * D  # Simplified assumption
-    
     return D, M_max
 
-# User inputs
-height = float(input("Enter sheet pile height (m): "))
-phi = float(input("Enter angle of internal friction (degrees): "))
-c = float(input("Enter value for soil cohesion (kPa): "))
-
-# Calculation
-embedment_depth, max_moment = calculate_embedment_depth_and_moment(height, phi, c)
-print(f"Required Embedment Depth: {embedment_depth} m, Maximum Moment: {max_moment} kNm")
-
 def plot_lateral_earth_pressure(height, phi):
-
-    # Plot the lateral earth pressure distribution for a given height and phi.
     phi_rad = np.radians(phi)
     Ka = np.tan(np.pi/4 - phi_rad/2)**2
     depths = np.linspace(0, height, 100)
     pressures = gamma_soil * depths * Ka
-    
     plt.figure()
     plt.plot(pressures, -depths)
     plt.xlabel('Lateral Earth Pressure (kPa)')
@@ -56,48 +29,61 @@ def plot_lateral_earth_pressure(height, phi):
     plt.grid(True)
     plt.show()
 
-def sensitivity_analysis(parameter_range, height, parameter_type='phi'):
-    """
-    Perform sensitivity analysis on shear strength parameters.
-    
-    :param parameter_range: Range of values for the parameter being analyzed.
-    :param height: Height of the sheet pile in meters
-    :param parameter_type: Type of parameter ('phi' or 'c') for the analysis.
-    """
+def sensitivity_analysis(height, phi_range, c):
     embedment_depths = []
     max_moments = []
-    
-    for param in parameter_range:
-        if parameter_type == 'phi':
-            D, M = calculate_embedment_depth_and_moment(height, param, c)
-        else:  # 'c'
-            D, M = calculate_embedment_depth_and_moment(height, phi, param)
-        embedment_depths.append(D)
-        max_moments.append(M)
-    
-    # Plotting results
+    for phi in phi_range:
+        D, M = calculate_embedment_depth_and_moment(height, phi, c)
+        if D is not None and M is not None:
+            embedment_depths.append(D)
+            max_moments.append(M)
     plt.figure(figsize=(10, 5))
-    
     plt.subplot(1, 2, 1)
-    plt.plot(parameter_range, embedment_depths)
-    plt.xlabel(f'{parameter_type.upper()}')
+    plt.plot(phi_range, embedment_depths)
+    plt.xlabel('Angle of Internal Friction (degrees)')
     plt.ylabel('Embedment Depth (m)')
+    plt.title('Sensitivity: Embedment Depth')
     plt.grid(True)
-    plt.title('Sensitivity Analysis: Embedment Depth')
-    
     plt.subplot(1, 2, 2)
-    plt.plot(parameter_range, max_moments)
-    plt.xlabel(f'{parameter_type.upper()}')
+    plt.plot(phi_range, max_moments)
+    plt.xlabel('Angle of Internal Friction (degrees)')
     plt.ylabel('Maximum Moment (kNm)')
+    plt.title('Sensitivity: Maximum Moment')
     plt.grid(True)
-    plt.title('Sensitivity Analysis: Maximum Moment')
-    
     plt.tight_layout()
     plt.show()
 
-# Execute plotting and sensitivity analysis
-plot_lateral_earth_pressure(height, phi)
+def on_calculate():
+    try:
+        height = float(height_entry.get())
+        phi = float(phi_entry.get())
+        c = float(c_entry.get())
+        embedment_depth, max_moment = calculate_embedment_depth_and_moment(height, phi, c)
+        if embedment_depth and max_moment:
+            messagebox.showinfo("Result", f"Required Embedment Depth: {embedment_depth:.2f}m, Maximum Moment: {max_moment:.2f}kNm")
+            plot_lateral_earth_pressure(height, phi)
+            phi_range = np.linspace(20, 40, 21)  # Detailed range for phi
+            sensitivity_analysis(height, phi_range, c)
+    except ValueError:
+        messagebox.showerror("Error", "Please enter valid numerical values.")
 
-# Sensitivity analysis parameters
-phi_range = np.linspace(20, 40, 5)  # Example range for phi
-sensitivity_analysis(phi_range, height, 'phi')
+# GUI setup
+root = tk.Tk()
+root.title("Sheet Pile Calculator")
+
+tk.Label(root, text="Enter sheet pile height (m):").pack()
+height_entry = tk.Entry(root)
+height_entry.pack()
+
+tk.Label(root, text="Enter angle of internal friction (degrees):").pack()
+phi_entry = tk.Entry(root)
+phi_entry.pack()
+
+tk.Label(root, text="Enter cohesion (kPa):").pack()
+c_entry = tk.Entry(root)
+c_entry.pack()
+
+calculate_btn = tk.Button(root, text="Calculate", command=on_calculate)
+calculate_btn.pack()
+
+root.mainloop()

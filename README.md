@@ -12,9 +12,8 @@ This program will be completed in Python and aims to acomplish the following:
    
 For extra fun the program will aslo do the following:
 
-1. TEXT
-2. TEXT
-3. TEXT
+1. Plot the displacement of the sheet pile with depth using the method presented in the NAVFAC manual 
+2. Include the effects of groundwater flow 
    
 Assumptions and methodologies:
 - This program covers a scenario where the sheetpiles penetrate granular soils and penetrate a clay layer

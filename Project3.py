@@ -5,28 +5,40 @@ from tkinter import messagebox
 
 # Constants
 gamma_soil = 10  # kN/m^3, unit weight of soil
-gamma_submerged = 18 # kN/m^3, unit weight of soil below groundwater table
+gamma_submerged = 18  # kN/m^3, unit weight of soil below groundwater table
 
 def calculate_embedment_depth_and_moment(height, phi, c):
     if height > 6.1:  # Corrected for clarity: 6.1 meters is approximately 20 feet
         messagebox.showerror("Error", "Sheet pile height exceeds cantilever limit (6 meters)")
         return None, None
     phi_rad = np.radians(phi)
-    Ka = np.tan(np.pi/4 - phi_rad/2)**2
+    Ka = np.tan(np.pi / 4 - phi_rad / 2) ** 2
     D = height * (2 * Ka)  # Simplified assumption
-    M_max = 0.5 * gamma_soil * Ka * height**2 * D  # Simplified assumption
+    M_max = 0.5 * gamma_soil * Ka * height ** 2 * D  # Simplified assumption
     return D, M_max
 
-def plot_lateral_earth_pressure(height, phi):
+def plot_lateral_earth_pressure_and_displacement(height, phi):
     phi_rad = np.radians(phi)
-    Ka = np.tan(np.pi/4 - phi_rad/2)**2
+    Ka = np.tan(np.pi / 4 - phi_rad / 2) ** 2
     depths = np.linspace(0, height, 100)
     pressures = gamma_soil * depths * Ka
+    D, _ = calculate_embedment_depth_and_moment(height, phi, None)  # Calculate D here
+    displacements = []
+    for depth in depths:
+        displacement = depth * (1 + (2 / 3) * np.sqrt(D / depth))
+        displacements.append(displacement)
     plt.figure()
+    plt.subplot(1, 2, 1)
     plt.plot(pressures, -depths)
     plt.xlabel('Lateral Earth Pressure (kPa)')
     plt.ylabel('Depth (m)')
     plt.title('Lateral Earth Pressure Distribution')
+    plt.grid(True)
+    plt.subplot(1, 2, 2)
+    plt.plot(displacements, -depths)
+    plt.xlabel('Displacement (m)')
+    plt.ylabel('Depth (m)')
+    plt.title('Displacement Distribution')
     plt.grid(True)
     plt.show()
 
@@ -62,7 +74,7 @@ def on_calculate():
         embedment_depth, max_moment = calculate_embedment_depth_and_moment(height, phi, c)
         if embedment_depth and max_moment:
             messagebox.showinfo("Result", f"Required Embedment Depth: {embedment_depth:.2f}m, Maximum Moment: {max_moment:.2f}kNm")
-            plot_lateral_earth_pressure(height, phi)
+            plot_lateral_earth_pressure_and_displacement(height, phi)
             phi_range = np.linspace(20, 40, 21)  # Detailed range for phi
             sensitivity_analysis(height, phi_range, c)
     except ValueError:

@@ -4,7 +4,7 @@ Cantilever Walls
 This program will be completed in Python and aims to acomplish the following:
 
 1. Allow the user to input the shear strength parameters of the soil (cohesion = c for clay and angle of internal friction ϕ for granular soil), as well as the height of the sheet pile.
-2. Check if the height of the sheet pile exceeds the cantilever limit (20 feet).
+2. Check if the height of the sheet pile exceeds the cantilever limit (6 meters).
 3. Compute the required embedment depth and maximum moment for the sheet pile.
 4. Plot the lateral earth pressure distribution.
 5. Perform a sensitivity analysis on the shear strength parameters, altering them within a reasonable range to observe how the embedment depth and maximum moment are affected.

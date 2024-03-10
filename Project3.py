@@ -6,17 +6,16 @@ gamma_soil = 18  # kN/m^3, unit weight of soil
 K0 = 0.5  # At-rest earth pressure coefficient, placeholder value
 
 def calculate_embedment_depth_and_moment(height, phi, c):
-    """
-    Calculate the required embedment depth and maximum moment
-    for a cantilever sheet pile in soil.
+# Calculate the required embedment depth and maximum moment
+#for a cantilever sheet pile in soil.
     
-    :param height: Height of the sheet pile in meters
-    :param phi: Angle of internal friction of granular soil in degrees
-    :param c: Cohesion of clay soil in kPa
-    :return: Embedment depth (m) and maximum moment (kNm)
-    """
+# :param height: Height of the sheet pile in feet
+# :param phi: Angle of internal friction of granular soil in degrees
+# :param c: Cohesion of clay soil in kPa
+# :return: Embedment depth (m) and maximum moment (kNm)
+   
     # Check if sheet pile height is too tall
-    if height > 6.1:  # 20 feet in meters
+    if height > 20.000001:  # 20 feet in meters
         return "Sheet pile height exceeds cantilever limit (20 feet)", 0
     
     # Calculate lateral earth pressure coefficients using Rankine's theory

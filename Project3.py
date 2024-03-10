@@ -4,7 +4,8 @@ import tkinter as tk
 from tkinter import messagebox
 
 # Constants
-gamma_soil = 18  # kN/m^3, unit weight of soil
+gamma_soil = 10  # kN/m^3, unit weight of soil
+gamma_submerged = 18 # kN/m^3, unit weight of soil below groundwater table
 
 def calculate_embedment_depth_and_moment(height, phi, c):
     if height > 6.1:  # Corrected for clarity: 6.1 meters is approximately 20 feet

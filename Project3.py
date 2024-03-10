@@ -41,3 +41,4 @@ c = float(input("Enter value for soil cohesion (kPa): "))
 embedment_depth, max_moment = calculate_embedment_depth_and_moment(height, phi, c)
 print(f"Required Embedment Depth: {embedment_depth}m, Maximum Moment: {max_moment}kNm")
 
+#### TESTEESTERFSTESFTEFETS#

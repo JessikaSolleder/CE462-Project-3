@@ -1,3 +1,6 @@
+![image](https://github.com/JessikaSolleder/CE462-Project-3/assets/156147848/6778e634-5af6-404e-a758-ab8ada847e2a)
+
+
 # CE462-Project-3
 Cantilever Walls
 

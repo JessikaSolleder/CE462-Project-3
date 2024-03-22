@@ -66,19 +66,60 @@ def sensitivity_analysis(height, phi_range, c):
     plt.tight_layout()
     plt.show()
 
+def prompt_phi_range(height, c):
+    # Pop-up window for phi range input
+    phi_range_window = tk.Toplevel(root)
+    phi_range_window.title("Phi Range Input")
+    
+    tk.Label(phi_range_window, text="Enter start of angle of internal friction range (degrees):").pack()
+    global phi_start_entry
+    phi_start_entry = tk.Entry(phi_range_window)
+    phi_start_entry.pack()
+
+    tk.Label(phi_range_window, text="Enter end of angle of internal friction range (degrees):").pack()
+    global phi_end_entry
+    phi_end_entry = tk.Entry(phi_range_window)
+    phi_end_entry.pack()
+
+    tk.Label(phi_range_window, text="Enter angle of internal friction step size (degrees):").pack()
+    global phi_step_entry
+    phi_step_entry = tk.Entry(phi_range_window)
+    phi_step_entry.pack()
+
+    # Button to proceed with sensitivity analysis after input
+    proceed_button = tk.Button(phi_range_window, text="Proceed", command=lambda: on_phi_range_entered(phi_range_window, height, c))
+    proceed_button.pack()
+
+def on_phi_range_entered(phi_range_window, height, c):
+    try:
+        phi_start = float(phi_start_entry.get())
+        phi_end = float(phi_end_entry.get())
+        phi_step = float(phi_step_entry.get())
+        phi_range_window.destroy()  # Close the pop-up window
+
+        # Generate a detailed range for phi based on user input for sensitivity analysis
+        phi_range = np.linspace(phi_start, phi_end, int((phi_end - phi_start) / phi_step) + 1)
+        sensitivity_analysis(height, phi_range, c)
+    except ValueError:
+        messagebox.showerror("Error", "Please enter valid numerical values in the Phi range fields.")
+
+# Adjust the on_calculate function to include calling the pop-up for phi range after the first graph
 def on_calculate():
     try:
         height = float(height_entry.get())
         phi = float(phi_entry.get())
         c = float(c_entry.get())
+
         embedment_depth, max_moment = calculate_embedment_depth_and_moment(height, phi, c)
         if embedment_depth and max_moment:
             messagebox.showinfo("Result", f"Required Embedment Depth: {embedment_depth:.2f}m, Maximum Moment: {max_moment:.2f}kNm")
             plot_lateral_earth_pressure_and_displacement(height, phi)
-            phi_range = np.linspace(20, 40, 21)  # Detailed range for phi
-            sensitivity_analysis(height, phi_range, c)
+
+        prompt_phi_range(height, c)  # Now passing height and c
+
     except ValueError:
         messagebox.showerror("Error", "Please enter valid numerical values.")
+
 
 # GUI setup
 root = tk.Tk()

@@ -19,7 +19,15 @@ For extra fun the program will aslo do the following:
 Assumptions and methodologies:
 - This program covers a scenario where the sheetpiles penetrate granular soil and embeds into a clay layer
 - For the lateral earth pressure calculations, the Rankine Theory is utilized
-- Unit Weight of the soil is assumed to be 10 kN/m^3
+
+  The soil layers are subject to the following assumptions for the purpose of this model. All assumptions are reflected in the provided diagram below.
+- Granular Soil Layer:
+       - Unit weight of the granular soil is assumed to be 10 kN/m^3
+       - Assumed to be cohesionless
+- Unit weight of the clay soil is assumed to be 19 kN/m^3
+       - Unit weight of the clay soil is assumed to be 19 kN/m^3
+       - Angle of internal friction assumed to be zero
+
 
 - ![image](https://github.com/JessikaSolleder/CE462-Project-3/assets/156147848/6778e634-5af6-404e-a758-ab8ada847e2a)
 

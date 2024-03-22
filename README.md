@@ -17,7 +17,7 @@ For extra fun the program will aslo do the following:
 2. Include the factored moment method
    
 Assumptions and methodologies:
-- This program covers a scenario where the sheetpiles penetrate granular soils and penetrate a clay layer
+- This program covers a scenario where the sheetpiles penetrate granular soil and embeds into a clay layer
 - For the lateral earth pressure calculations, the Rankine Theory is utilized
 - Unit Weight of the soil is assumed to be 10 kN/m^3
 

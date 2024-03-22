@@ -1,6 +1,3 @@
-![image](https://github.com/JessikaSolleder/CE462-Project-3/assets/156147848/6778e634-5af6-404e-a758-ab8ada847e2a)
-
-
 # CE462-Project-3
 Cantilever Walls
 
@@ -23,5 +20,8 @@ Assumptions and methodologies:
 - This program covers a scenario where the sheetpiles penetrate granular soil and embeds into a clay layer
 - For the lateral earth pressure calculations, the Rankine Theory is utilized
 - Unit Weight of the soil is assumed to be 10 kN/m^3
+
+- ![image](https://github.com/JessikaSolleder/CE462-Project-3/assets/156147848/6778e634-5af6-404e-a758-ab8ada847e2a)
+
 
 

@@ -13,11 +13,11 @@ This program will be completed in Python and aims to acomplish the following:
 For extra fun the program will aslo do the following:
 
 1. Plot the displacement of the sheet pile with depth using the method presented in the NAVFAC manual 
-2. Include the effects of groundwater flow 
+2. Include the factored moment method
    
 Assumptions and methodologies:
 - This program covers a scenario where the sheetpiles penetrate granular soils and penetrate a clay layer
 - For the lateral earth pressure calculations, the Rankine Theory is utilized
-- Unit Weight of the soil is assumed to be ######
-- The value of Ka of the soil is assumed to be ####
+- Unit Weight of the soil is assumed to be 10 kN/m^3
+
 

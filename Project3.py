@@ -42,13 +42,18 @@ def on_calculate():
         c = float(c_entry.get())
         
         results = calculate_embedment_depth_and_moment(height, phi, c)
-        D_actual = results[8]  # Assuming D_positive is the fourth item in the tuple
-        D_actual_rounded = "{:.3g}".format(D_actual)
-        messagebox.showinfo("Result", f"The actual depth of penetration for your wall is approximately: {D_actual_rounded} meters")
+        D_actual = results[8]  # Assuming D_actual is the ninth item in the tuple
+        M_max = results[0]  # M_max is the first item in the tuple
 
-        M_max = results[0]
+        # Formatting values to 3 significant figures
+        D_actual_rounded = "{:.3g}".format(D_actual)
         M_max_rounded = "{:.3g}".format(M_max)
-        messagebox.showinfo("Result", f"The maximum moment for your wall is approximately: {M_max_rounded} kilonewton meters")
+
+        # Creating the message
+        message = f"Actual Penetration Depth: {D_actual_rounded} meters\n\n"
+        message += f"Maximum Bending Moment: {M_max_rounded} kilonewton-meters"
+
+        messagebox.showinfo("Results", message)
         
     except ValueError:
         messagebox.showerror("Error", "Please ensure all inputs are numeric.")

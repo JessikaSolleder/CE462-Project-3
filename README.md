@@ -19,8 +19,10 @@ For extra fun the program will aslo do the following:
 Assumptions and methodologies:
 - This program covers a scenario where the sheetpiles penetrate granular soil and embeds into a clay layer
 - For the lateral earth pressure calculations, the Rankine Theory is utilized
+- Actual depth = 1.5 * theoretical depth
 
   The soil layers are subject to the following assumptions for the purpose of this model. All assumptions are reflected in the provided diagram below.
+  
 - Granular Soil Layer:
        - Unit weight of the granular soil is assumed to be 10 kN/m^3
        - Assumed to be cohesionless

@@ -50,7 +50,7 @@ def on_calculate():
         M_max_rounded = "{:.3g}".format(M_max)
 
         # Creating the message
-        message = f"Actual Penetration Depth: {D_actual_rounded} meters\n\n"
+        message = f"Required Embedment Depth: {D_actual_rounded} meters\n\n"
         message += f"Maximum Bending Moment: {M_max_rounded} kilonewton-meters"
 
         messagebox.showinfo("Results", message)

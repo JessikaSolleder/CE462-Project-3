@@ -6,9 +6,8 @@ from tkinter import messagebox
 
 
 # Assumptions
-gamma_gransoil = 10  # kN/m^3, unit weight of soil
-gamma_claysoil = 19  # kN/m^3, unit weight of soil below groundwater table
-
+gamma_gransoil = 20  # kN/m^3, unit weight of soil
+gamma_claysoil = 24  # kN/m^3, unit weight of soil below groundwater table
 
 def calculate_embedment_depth_and_moment(height, phi, c):
 
@@ -21,6 +20,40 @@ def calculate_embedment_depth_and_moment(height, phi, c):
     p1 = (0.5 * ((height ** 2)* ( Ka) * (gamma_gransoil)))
     z1 = (height / 3)
     #breaking down D positive into smaller pieces to solve
+    
+    #### new Depth#####
+    import cmath
+
+def quadratic_roots(a, b, c, c1, height):
+    # Calculate the discriminant
+    discriminant = (b**2) - (4*a*c1)
+    
+    # Check if the discriminant is positive, negative, or zero
+    if discriminant > 0:
+        # If the discriminant is positive, there are two real roots
+        root1 = (-b + discriminant**0.5) / (2*a)
+        root2 = (-b - discriminant**0.5) / (2*a)
+        return root1, root2
+    elif discriminant == 0:
+        # If the discriminant is zero, there is one real root (a repeated root)
+        root = -b / (2*a)
+        return root, root
+    else:
+        # If the discriminant is negative, there are two complex roots
+        root1 = (-b + cmath.sqrt(discriminant)) / (2*a)
+        root2 = (-b - cmath.sqrt(discriminant)) / (2*a)
+        return root1, root2
+
+# Example usage
+a = 4*c-gamma_gransoil * height
+b = 2 * p1
+c1 = (p1(p1+12 * c * z1))/(gamma_gransoil * height + 2* c)
+
+root1, root2 = quadratic_roots(a, b, c1)
+print("Root 1:", root1)
+print("Root 2:", root2)
+
+#######################################################
     sqrt_term = np.sqrt(((8*c)**2)*p1*z1 - (2*c*height*p1*gamma_gransoil*z1) + (c * p1**2))
     denominator = np.sqrt((2 * c) + (height*gamma_gransoil))
     numerator = p1 + (((6 ** 0.5) * sqrt_term) / denominator)
@@ -60,17 +93,17 @@ def on_calculate():
         # Creating the message
         message = f"Required Embedment Depth: {D_actual_rounded} meters\n\n"
         message += f"Maximum Bending Moment: {M_max_rounded} kilonewton-meters"
-
+        message += f"l4: {l4}"
         messagebox.showinfo("Results", message)
         
-        plot_lateral_earth_pressure_diagram(D_actual, l4, sigma6, sigma7, height)
+        plot_lateral_earth_pressure_diagram(D_actual, l4, sigma6, sigma7, height, sigma2)
         
     except ValueError:
         messagebox.showerror("Error", "Please ensure all inputs are numeric.")
         
         
     
-def plot_lateral_earth_pressure_diagram(D_actual, l4, sigma6, sigma7, height):
+def plot_lateral_earth_pressure_diagram(D_actual, l4, sigma6, sigma7, height, sigma2):
     l3 = D_actual - l4
     side_b_small_triangle = l4 - l3  
     
@@ -84,10 +117,45 @@ def plot_lateral_earth_pressure_diagram(D_actual, l4, sigma6, sigma7, height):
     # Plotting the lateral earth pressure distribution
     plt.figure(figsize=(6, 8))
     
+    #plt.fill_between([0, 0], height, sigma2, color ='purple', label = 'granular')
     # Plotting rectangular part of the pressure distribution
-    plt.fill_between([0, sigma6], height, height + l3, color='lightblue', label='Granular Soil Pressure')
+   # plt.fill_between([0, sigma2], 0, height, color='lightblue', label='Granular Soil Pressure')
     
     # Plotting triangular part of the pressure distribution
+# Define the vertices of the triangle
+    x = [0, sigma2 , 0, 0]  # x-coordinates of the vertices
+    y = [0, -height, -height, 0]  # y-coordinates of the vertices
+
+# Plot the triangle
+    plt.plot(x, y, color='blue')
+
+# Fill the triangle
+    plt.fill_between(x, y, color='lightblue', alpha=0.5)
+####TRAPEZOID
+# Customize the plot
+    plt.xlabel('X-axis')
+    plt.ylabel('Y-axis')
+    plt.title('Filled Triangle')
+    plt.grid(True)
+
+    x = [0, -sigma6 , -sigma6, sigma7, 0]  # x-coordinates of the vertices
+    y = [-height, -height, -(height+l3), -(height+l3+l4), -(height +l3+l4)]  # y-coordinates of the vertices
+
+# Plot the triangle
+    plt.plot(x, y, color='blue')
+
+# Fill the triangle
+    plt.fill_between(x, y, color='lightblue', alpha=0.5)
+
+# Customize the plot
+    plt.xlabel('X-axis')
+    plt.ylabel('Y-axis')
+    plt.title('Filled Triangle')
+    plt.grid(True)
+
+# Show the plot
+    plt.show()
+
     plt.fill_between([0, sigma7], height + l3, height + D_actual, color='lightgreen', label='Clay Soil Pressure')
     
     # Additional lines to indicate key depths
@@ -106,8 +174,6 @@ def plot_lateral_earth_pressure_diagram(D_actual, l4, sigma6, sigma7, height):
     plt.grid(True)
     plt.gca().invert_yaxis()  # Invert y-axis to show depth increasing downwards
     plt.show()
-    
-
     
 root = tk.Tk()
 root.title("Sheet Pile Calculator")

@@ -1,3 +1,4 @@
+import cmath
 from math import sin
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,74 +18,61 @@ def calculate_embedment_depth_and_moment(height, phi, c):
     phi_rad = np.radians(phi)
     Ka = np.tan(np.radians(45) - phi_rad / 2) ** 2
     sigma2 = gamma_gransoil * height * Ka
-    p1 = (0.5 * ((height ** 2)* ( Ka) * (gamma_gransoil)))
-    z1 = (height / 3)
-    #breaking down D positive into smaller pieces to solve
-    
-    #### new Depth#####
-    import cmath
+    p1 = 0.5 * ((height ** 2)* Ka * gamma_gransoil)
+    z1 = height / 3
+    # Call quadratic_roots function
+    root1, root2 = quadratic_roots(c, height, p1)
+    print("Root 1:", root1)
+    print("Root 2:", root2)
+    return root1, root2, p1
 
-def quadratic_roots(a, b, c, c1, height):
+def quadratic_roots(c, height, p1):
+    a = 4 * c - gamma_gransoil * height
+    b = 2 * p1
+    c1 = (p1 * (p1 + 12 * c * (height / 3))) / (gamma_gransoil * height + 2 * c)
+    
     # Calculate the discriminant
     discriminant = (b**2) - (4*a*c1)
     
     # Check if the discriminant is positive, negative, or zero
-    if discriminant > 0:
-        # If the discriminant is positive, there are two real roots
+    if discriminant >= 0:
+        # If the discriminant is non-negative, there are real roots
         root1 = (-b + discriminant**0.5) / (2*a)
         root2 = (-b - discriminant**0.5) / (2*a)
-        return root1, root2
-    elif discriminant == 0:
-        # If the discriminant is zero, there is one real root (a repeated root)
-        root = -b / (2*a)
-        return root, root
+        
+        # Choose the positive root
+        if root1 >= 0:
+            return root1
+        elif root2 >= 0:
+            return root2
+        else:
+            return None  # No positive roots
     else:
-        # If the discriminant is negative, there are two complex roots
-        root1 = (-b + cmath.sqrt(discriminant)) / (2*a)
-        root2 = (-b - cmath.sqrt(discriminant)) / (2*a)
-        return root1, root2
-
-# Example usage
-a = 4*c-gamma_gransoil * height
-b = 2 * p1
-c1 = (p1(p1+12 * c * z1))/(gamma_gransoil * height + 2* c)
-
-root1, root2 = quadratic_roots(a, b, c1)
-print("Root 1:", root1)
-print("Root 2:", root2)
-
-#######################################################
-    sqrt_term = np.sqrt(((8*c)**2)*p1*z1 - (2*c*height*p1*gamma_gransoil*z1) + (c * p1**2))
-    denominator = np.sqrt((2 * c) + (height*gamma_gransoil))
-    numerator = p1 + (((6 ** 0.5) * sqrt_term) / denominator)
-    D_positive = numerator / ((4 * c) - (height * gamma_gransoil))
-    if D_positive <= 0:
-        messagebox.showerror("Error", "Calculated embedment depth is non-positive. Please check your inputs.")
+        # If the discriminant is negative, there are no real roots
         return None, None
-    l4 = D_positive * ((4*c) - (gamma_gransoil * height) - (0.5 * gamma_gransoil * height ** 2 * Ka)) / (4 * c)
-    sigma6 = (4*c) - (gamma_gransoil * height)
-    sigma7 = (4*c) + (gamma_gransoil * height)
-    D_actual = 1.5 * D_positive
-    z_prime = (p1 / sigma6) # location of the maximum bending moment
-    M_max = (p1* (z_prime + z1)) - ((sigma6 * (z_prime ** 2)) / 2) 
-    print(type(D_positive), D_positive)
-    return M_max, p1, z1, D_positive, l4, sigma2, sigma6, sigma7, D_actual, z_prime
 
-def on_calculate():
+def calculate_D_actual(height, phi, c, p1):
+
+    root1, root2 = quadratic_roots(c, height, p1)
+    if root1 is not None:
+        D_actual = 1.5 * root1
+        print("D_actual:", D_actual)
+        return D_actual
+    elif root2 is not None:
+        D_actual = 1.5 * root2
+        print("D_actual", D_actual )
+        return D_actual
+    else:
+        print("No positive real root found. Please review your inputs.")
+        return None
+
+def calculate_M_max(p1, z1, sigma6, D_actual):
     try:
         height = float(height_entry.get())
         phi = float(phi_entry.get())
         c = float(c_entry.get())
-        
-        results = calculate_embedment_depth_and_moment(height, phi, c)
-        D_actual = results[8]  # Assuming D_actual is the ninth item in the tuple
-        M_max = results[0]  # M_max is the first item in the tuple
-        
-        if results is None:  # Check if results are None, which indicates an error
-            return
-
-        # Unpacking results
-        M_max, p1, z1, D_positive, l4, sigma2, sigma6, sigma7, D_actual, z_prime = results
+        M_max_location = p1 / sigma6
+        M_max = p1 * ((M_max_location) + z1) - ((sigma6 * (M_max_location ** 2)/ 2))
 
         # Formatting values to 3 significant figures
         D_actual_rounded = "{:.3g}".format(D_actual)
@@ -93,17 +81,15 @@ def on_calculate():
         # Creating the message
         message = f"Required Embedment Depth: {D_actual_rounded} meters\n\n"
         message += f"Maximum Bending Moment: {M_max_rounded} kilonewton-meters"
-        message += f"l4: {l4}"
+        #message += f"l4: {l4}"
         messagebox.showinfo("Results", message)
         
-        plot_lateral_earth_pressure_diagram(D_actual, l4, sigma6, sigma7, height, sigma2)
-        
     except ValueError:
-        messagebox.showerror("Error", "Please ensure all inputs are numeric.")
-        
+     messagebox.showerror("Error", "Please ensure all inputs are numeric.")
         
     
-def plot_lateral_earth_pressure_diagram(D_actual, l4, sigma6, sigma7, height, sigma2):
+def plot_lateral_earth_pressure_diagram(D_actual, l4, sigma6, sigma7, Ka, height, sigma2, c):
+    l4 = D_actual * (4 * c - (gamma_gransoil * height) - (0.5 * gamma_gransoil * height ** 2 * Ka)) / 2
     l3 = D_actual - l4
     side_b_small_triangle = l4 - l3  
     
@@ -121,16 +107,17 @@ def plot_lateral_earth_pressure_diagram(D_actual, l4, sigma6, sigma7, height, si
     # Plotting rectangular part of the pressure distribution
    # plt.fill_between([0, sigma2], 0, height, color='lightblue', label='Granular Soil Pressure')
     
-    # Plotting triangular part of the pressure distribution
+# Plotting triangular part of the pressure distribution
 # Define the vertices of the triangle
-    x = [0, sigma2 , 0, 0]  # x-coordinates of the vertices
-    y = [0, -height, -height, 0]  # y-coordinates of the vertices
+    x = [0, sigma2 , 0, 0]
+    y = [0, -height, -height, 0]  
 
-# Plot the triangle
+# Plot the top triangle
     plt.plot(x, y, color='blue')
 
 # Fill the triangle
     plt.fill_between(x, y, color='lightblue', alpha=0.5)
+    
 ####TRAPEZOID
 # Customize the plot
     plt.xlabel('X-axis')
@@ -193,7 +180,7 @@ tk.Label(root, text="Enter the cohesion of the clay layer (kPa):").pack()
 c_entry = tk.Entry(root)
 c_entry.pack()
 
-calculate_btn = tk.Button(root, text="Calculate", command=on_calculate)
+calculate_btn = tk.Button(root, text="Calculate", command=calculate_M_max)
 calculate_btn.pack()
 
 root.mainloop()

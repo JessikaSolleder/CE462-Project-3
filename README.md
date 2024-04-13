@@ -25,8 +25,8 @@ Assumptions and methodologies:
 - Granular Soil Layer:
        - Unit weight of the granular soil is assumed to be 20 kN/m^3
        - Assumed to be cohesionless
-- Unit weight of the clay soil is assumed to be 24 kN/m^3
-       - Unit weight of the clay soil is assumed to be 19 kN/m^3
+- Clay Soil Layer:
+       - Unit weight of the clay soil is assumed to be 24 kN/m^3
        - Angle of internal friction assumed to be zero
 
 

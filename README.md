@@ -16,7 +16,7 @@ For extra fun the program will aslo do the following:
 1. Include the factored moment method
    
 Assumptions and methodologies:
-- This program covers a scenario where the sheetpiles penetrate granular soil and embeds into a clay layer
+- This program covers a scenario where the sheetpiles penetrate granular soil and embed into a clay layer
 - For the lateral earth pressure calculations, the Rankine Theory is utilized
 - Actual depth = 1.5 * theoretical depth
 

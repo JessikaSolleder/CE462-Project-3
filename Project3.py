@@ -1,3 +1,4 @@
+from cmath import tan
 import numpy as np
 import matplotlib.pyplot as plt
 import tkinter as tk
@@ -52,6 +53,7 @@ def calculate_values():
         phi_sensitivity_btn = tk.Button(phi_range_window, text="Run Sensitivity Analysis for phi", command=lambda: run_sensitivity_analysis(phi_range_entry.get(), initial_c, height, "phi"))
         phi_sensitivity_btn.pack()
 
+        # Call the function to plot lateral earth pressure diagram with initial values
         plot_lateral_earth_pressure_diagram(initial_phi, initial_c, height)
 
     except ValueError:
@@ -127,7 +129,6 @@ def calculate_for_phi_and_c(phi, c, height):
 
     return D_actual, M_max
 
-        
 def plot_lateral_earth_pressure_diagram(D_actual, p1, sigma6, sigma7, Ka, height, sigma2, c):
     l4 = D_actual * (4 * c - (gamma_gransoil * height) - (0.5 * gamma_gransoil * height ** 2 * Ka)) / 2
     l3 = D_actual - l4
@@ -161,10 +162,29 @@ def plot_lateral_earth_pressure_diagram(D_actual, p1, sigma6, sigma7, Ka, height
     plt.gca().invert_yaxis()  # Invert y-axis to show depth increasing downwards
 
     # Call plt.show() only once after all plots are created
-    plt.show()
+plt.show()
 
-# Sensitivity Analysis on shear strength parameters + their effect on max moment and embedment depth
+def factored_moment_method(phi, gamma_claysoil, D_actual, height):
+    kax = (tan(45 - (phi/2)))^2
+    kpx = (tan(45 + phi/2))^2
+    
+    #Passive Case
+    ppx = 0.5 * kpx * gamma_claysoil * D_actual ** 2
+    zp = D_actual/3
+    mop = ppx * zp
+    factor = 2
+    factored_mop = factor * mop
+    
+    
+    # Active Case - was unsure how to find this with two gamma values so averaged them
+    pax = (0.5 * kax * 0.5 * (gamma_claysoil + gamma_gransoil) * (D_actual + height) ** 2)
+    za = (height + D_actual) /3
+    moa = pax * za
+    
 
+    message = f"Factored Moment of Passive Case: {factored_mop} kN-m\nFactored Moment of Active Case: {moa} kN-m"
+    messagebox.showinfo("Moment Results", message)
+    
 # GUI setup
 root = tk.Tk()
 root.title("Sheet Pile Calculator")

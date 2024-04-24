@@ -144,13 +144,14 @@ def get_Dtheor(l3, l4):
 def get_Dactual(Dtheor):
     Dactual = 1.3 * Dtheor
     return Dactual
-
-#Step 19: Calculate maximum moment (zprime)
+#Step 19: Calculate Location of Maximum Moment (zprime)
 def get_zprime(p, Kp, Ka, gamma_gransoil):
     zprime = math.sqrt((2*p) / ((Kp - Ka) * gamma_gransoil))
     return zprime
-
-
+#Step 20: Calculate Maximum Moment
+def get_Mmax(p, zbar, zprime, gamma_gransoil, Kp, Ka):
+    Mmax = ((p * (zbar + zprime)) - (0.5 * ( gamma_gransoil * zprime ** 2) * (Kp - Ka)) * (zprime / 3))
+    return Mmax
 
 
 
@@ -178,6 +179,8 @@ sigma3 = get_sigma3(l4, Kp, Ka, gamma_gransoil)
 l5 = get_l5(sigma3, l4, p, sigma4)
 Dtheor = get_Dtheor(l3, l4)
 Dactual = get_Dactual(Dtheor)
+zprime = get_zprime(p, Kp, Ka, gamma_gransoil)
+Mmax = get_Mmax(p, zbar, zprime, gamma_gransoil, Kp, Ka)
 
 # Print the positive root of the quartic equation
 print("Positive root of the quartic equation:", l4)

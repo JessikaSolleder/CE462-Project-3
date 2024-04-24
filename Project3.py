@@ -131,11 +131,7 @@ def get_l5(sigma3, l4, p, sigma4):
     l5 = ((sigma3 * l4) - (2 * p)) / (sigma3 + sigma4)
     return l5
 
- #Step 16: Pressure Distribution Diagram #################################################################################################
- #########################################################################################################################################
- ########################################### INSERT PRESSURE DISTRIBUTION DIAGRAM ########################################################
- #########################################################################################################################################
- #########################################################################################################################################
+ #Step 16: Pressure Distribution Diagram - see below
  
  #Step 17: Calculate Theoretical Depth
 def get_Dtheor(l3, l4):
@@ -155,7 +151,7 @@ def get_Mmax(p, zbar, zprime, gamma_gransoil, Kp, Ka):
     Mmax = ((p * (zbar + zprime)) - (0.5 * ( gamma_gransoil * zprime ** 2) * (Kp - Ka)) * (zprime / 3))
     return Mmax
 
-
+#Additional Option 1: Factored Moment Method
 
 
 
@@ -198,7 +194,7 @@ plt.axvline(x=3, color='red', linestyle='--')
 plt.plot(x_values, y_values, marker='o', linestyle='-')  # Connect points with a line
 plt.xlabel('X Axis')  # Label for the x-axis
 plt.ylabel('Y Axis')  # Label for the y-axis
-plt.title('Series of Points with Connecting Lines')  # Title of the plot
+plt.title('Lateral Earth Pressure Diagram. Red Dotted Line = Sheet Pile')  # Title of the plot
 plt.grid(True)  # Show grid
 plt.show()  # Display the plot
 

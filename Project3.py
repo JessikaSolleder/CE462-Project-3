@@ -3,6 +3,8 @@ from tkinter import simpledialog
 import numpy as np
 import math
 import sympy as sp
+import matplotlib.pyplot as plt
+
 
 #
 # Geotechnical Design II - Dr. Hudyma, Project 3
@@ -156,6 +158,8 @@ def get_Mmax(p, zbar, zprime, gamma_gransoil, Kp, Ka):
 
 
 
+
+
 root = tk.Tk()
 root.withdraw()
 
@@ -184,3 +188,20 @@ Mmax = get_Mmax(p, zbar, zprime, gamma_gransoil, Kp, Ka)
 
 # Print the positive root of the quartic equation
 print("Positive root of the quartic equation:", l4)
+
+# Plot the Lateral Earth Pressure Diagram
+    # Define the x and y coordinates of the points
+x_values = [0, sigma2, 0, -sigma3, sigma4, 0 ]
+y_values = [0, -height, -(height + l3), -(height + Dactual - l5), -(height + Dactual), -(height + Dactual)]
+plt.axvline(x=3, color='red', linestyle='--')
+    # Plot the points
+plt.plot(x_values, y_values, marker='o', linestyle='-')  # Connect points with a line
+plt.xlabel('X Axis')  # Label for the x-axis
+plt.ylabel('Y Axis')  # Label for the y-axis
+plt.title('Series of Points with Connecting Lines')  # Title of the plot
+plt.grid(True)  # Show grid
+plt.show()  # Display the plot
+
+
+
+

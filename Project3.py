@@ -4,6 +4,13 @@ import numpy as np
 import math
 import sympy as sp
 
+#
+# Geotechnical Design II - Dr. Hudyma, Project 3
+# Model: Cantilever Wall in Granular Soils (no water table)
+# Lecture Slides: Cantilever Walls - Traditional Textbook Methods- 2024, Slides 5 - 9
+# @author Jessika Solleder
+#
+
 # Assumptions
 gamma_gransoil = 20  # kN/m^3, unit weight of soil
 
@@ -131,14 +138,23 @@ def get_l5(sigma3, l4, p, sigma4):
  #Step 17: Calculate Theoretical Depth
 def get_Dtheor(l3, l4):
     Dtheor = l3 + l4
-    return Dtheor 
+    return Dtheor
 
 #Step 18: Calculate Actual Depth (provides FS in model)
 def get_Dactual(Dtheor):
     Dactual = 1.3 * Dtheor
     return Dactual
 
-#Step 19: Calculate maximum moment
+#Step 19: Calculate maximum moment (zprime)
+def get_zprime(p, Kp, Ka, gamma_gransoil):
+    zprime = math.sqrt((2*p) / ((Kp - Ka) * gamma_gransoil))
+    return zprime
+
+
+
+
+
+
 root = tk.Tk()
 root.withdraw()
 
@@ -160,6 +176,8 @@ l4 = get_l4(a1, a2, a3, a4)
 sigma4 = get_sigma4(l4, Kp, Ka, sigma5, gamma_gransoil)
 sigma3 = get_sigma3(l4, Kp, Ka, gamma_gransoil)
 l5 = get_l5(sigma3, l4, p, sigma4)
+Dtheor = get_Dtheor(l3, l4)
+Dactual = get_Dactual(Dtheor)
 
 # Print the positive root of the quartic equation
 print("Positive root of the quartic equation:", l4)

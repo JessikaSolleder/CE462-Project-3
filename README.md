@@ -23,13 +23,12 @@ Assumptions and methodologies:
 - Actual depth = 1.3 ( l3 + l4)
 - There is no groundwater table accounted for in this model
 - Unit weight of the granular soil is assumed to be 20 kN/m^3
-- Assumed to be cohesionless
+- Soil is assumed to be cohesionless
 
 A basic diagram of the type of scenario the model seeks to represent can be seen below:
 
 ![image](https://github.com/JessikaSolleder/CE462-Project-3/assets/156147848/656dec7f-3a4b-49b4-a17e-94ee2573b339)
 
-PROJECT MEMO:
 
 This project performed a sensitivity analysis comparing a change in the internal friction and its impact on the maximum moment and embedment depth as seen in the figures below. For both analyses, it can be seen that an increased angle of internal friction will cause in increase in maximum moment as well as required embedment depth. This model performs this test on a range from 2 to 50 degrees and runs the analysis over 40 points incrementally between this range. Increasing the model may have an effect on the relationship between the factors aforementioned, but it is unlikely. 
 

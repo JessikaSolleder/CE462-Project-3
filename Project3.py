@@ -1,5 +1,7 @@
+from cmath import tan
 import tkinter as tk
 from tkinter import simpledialog
+from tkinter import messagebox
 import numpy as np
 import math
 import sympy as sp
@@ -152,7 +154,26 @@ def get_Mmax(p, zbar, zprime, gamma_gransoil, Kp, Ka):
     return Mmax
 
 #Additional Option 1: Factored Moment Method
+def factored_moment_method(phi, gamma_claysoil, D_actual, height):
+    kax = (tan(45 - (phi/2)))**2
+    kpx = (tan(45 + phi/2))**2
+    
+    #Passive Case
+    ppx = 0.5 * kpx * gamma_gransoil * Dactual ** 2
+    zp = Dactual/3
+    mop = ppx * zp
+    factor = 2
+    factored_mop = factor * mop
+    
+    
+    # Active Case - was unsure how to find this with two gamma values so averaged them
+    pax = (0.5 * kax * 0.5 * (gamma_claysoil + gamma_gransoil) * (D_actual + height) ** 2)
+    za = (height + D_actual) /3
+    moa = pax * za
+    
 
+    message = f"Factored Moment of Passive Case: {factored_mop} kN-m\nFactored Moment of Active Case: {moa} kN-m"
+    messagebox.showinfo("Factored Moment Method Results", message)
 
 
 
@@ -197,6 +218,8 @@ plt.ylabel('Y Axis')  # Label for the y-axis
 plt.title('Lateral Earth Pressure Diagram. Red Dotted Line = Sheet Pile')  # Title of the plot
 plt.grid(True)  # Show grid
 plt.show()  # Display the plot
+
+factored_moment_method(phi, gamma_gransoil, Dactual, height)
 
 
 

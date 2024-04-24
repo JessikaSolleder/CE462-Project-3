@@ -1,4 +1,3 @@
-from cmath import tan
 import tkinter as tk
 from tkinter import simpledialog
 from tkinter import messagebox
@@ -109,14 +108,18 @@ def get_l4(a1, a2, a3, a4):
     # Find the roots of the quartic equation
     roots = np.roots(coefficients)
     
-    # Select the positive root
+    # Filter out infinite and NaN roots
+    real_roots = [root for root in roots if np.isreal(root) and not np.isnan(root) and not np.isinf(root)]
+    
+    # Select the positive root if it exists
     positive_root = None
-    for root in roots:
-        if np.isreal(root) and root > 0:
+    for root in real_roots:
+        if root > 0:
             positive_root = root
             break
     
     return positive_root
+
 
 #Step 13: Calculate sigma4
 def get_sigma4(l4, Kp, Ka, sigma5, gamma_gransoil):
@@ -153,10 +156,14 @@ def get_Mmax(p, zbar, zprime, gamma_gransoil, Kp, Ka):
     Mmax = ((p * (zbar + zprime)) - (0.5 * ( gamma_gransoil * zprime ** 2) * (Kp - Ka)) * (zprime / 3))
     return Mmax
 
+#Step 21: Perform a Sensitivity Analysis, by changing the shear strength parameter (phi) and comparing it to maximum moment - see below
+#Step 22: Perform a Sensitivity Analysis, by changing the shear strength parameter (phi) and comparing it to embedment depth- see below
+
+
 #Additional Option 1: Factored Moment Method
-def factored_moment_method(phi, gamma_claysoil, D_actual, height):
-    kax = (tan(45 - (phi/2)))**2
-    kpx = (tan(45 + phi/2))**2
+def factored_moment_method(phi, gamma_gransoil, D_actual, height):
+    kax = (np.tan(np.radians(45 - (phi/2))))**2
+    kpx = (np.tan(np.radians(45 + phi/2)))**2
     
     #Passive Case
     ppx = 0.5 * kpx * gamma_gransoil * Dactual ** 2
@@ -167,7 +174,7 @@ def factored_moment_method(phi, gamma_claysoil, D_actual, height):
     
     
     # Active Case - was unsure how to find this with two gamma values so averaged them
-    pax = (0.5 * kax * 0.5 * (gamma_claysoil + gamma_gransoil) * (D_actual + height) ** 2)
+    pax = (0.5 * kax * 0.5 * (gamma_gransoil + gamma_gransoil) * (D_actual + height) ** 2)
     za = (height + D_actual) /3
     moa = pax * za
     
@@ -213,14 +220,79 @@ y_values = [0, -height, -(height + l3), -(height + Dactual - l5), -(height + Dac
 plt.axvline(x=3, color='red', linestyle='--')
     # Plot the points
 plt.plot(x_values, y_values, marker='o', linestyle='-')  # Connect points with a line
-plt.xlabel('X Axis')  # Label for the x-axis
-plt.ylabel('Y Axis')  # Label for the y-axis
+plt.xlabel('Pressure (kPa)')  # Label for the x-axis
+plt.ylabel('Depth (m)')  # Label for the y-axis
 plt.title('Lateral Earth Pressure Diagram. Red Dotted Line = Sheet Pile')  # Title of the plot
 plt.grid(True)  # Show grid
 plt.show()  # Display the plot
 
 factored_moment_method(phi, gamma_gransoil, Dactual, height)
 
+# Step 21: Perform a Sensitivity Analysis Phi v Mmax
 
+phi_range = np.linspace(2, 50, 40)  # Adjust start, end and num for your desired phi range
 
+Mmax_values = []
+for phi in phi_range:
+  # Recalculate Ka, Kp, etc. based on the current phi value
+  Ka = get_ka(phi)
+  Kp = get_kp(phi)
+  sigma2 = get_sigma2(gamma_gransoil, height, Ka)
+  l3 = get_l3 (Kp, Ka, height)
+  zbar = get_zbar(height, l3)
+  p = get_p (sigma2, height, l3)
+  sigma5 = get_sigma5(gamma_gransoil, height, Kp, l3, Ka)
+  a1 = get_a1(gamma_gransoil, Kp, Ka, sigma5)
+  a2 = get_a2(p, Kp, Ka, gamma_gransoil)
+  a3 = get_a3(p,zbar, Kp, Ka, sigma5, gamma_gransoil)
+  a4 = get_a4 (p, zbar, sigma5, gamma_gransoil, Kp, Ka)
+  l4 = get_l4(a1, a2, a3, a4)
+  sigma4 = get_sigma4(l4, Kp, Ka, sigma5, gamma_gransoil)
+  sigma3 = get_sigma3(l4, Kp, Ka, gamma_gransoil)
+  l5 = get_l5(sigma3, l4, p, sigma4)
+  Dtheor = get_Dtheor(l3, l4)
+  Dactual = get_Dactual(Dtheor)
+  zprime = get_zprime(p, Kp, Ka, gamma_gransoil)
+  Mmax = get_Mmax(p, zbar, zprime, gamma_gransoil, Kp, Ka)
+  Mmax_values.append(Mmax)
 
+# Plot Mmax vs phi
+plt.plot(phi_range, Mmax_values)
+plt.xlabel('Phi (degrees)')
+plt.ylabel('Maximum Moment (kN-m)')
+plt.title('Maximum Moment vs Phi')
+plt.grid(True)
+plt.show()
+
+# Define phi range (adjust start, end, and num for your desired range)
+phi_range = np.linspace(2, 50, 40)  
+
+Dactual_values = []
+for phi in phi_range:
+  # Recalculate Ka, Kp, etc. based on the current phi value
+  Ka = get_ka(phi)
+  Kp = get_kp(phi)
+  sigma2 = get_sigma2(gamma_gransoil, height, Ka)
+  l3 = get_l3 (Kp, Ka, height)
+  zbar = get_zbar(height, l3)
+  p = get_p (sigma2, height, l3)
+  sigma5 = get_sigma5(gamma_gransoil, height, Kp, l3, Ka)
+  a1 = get_a1(gamma_gransoil, Kp, Ka, sigma5)
+  a2 = get_a2(p, Kp, Ka, gamma_gransoil)
+  a3 = get_a3(p,zbar, Kp, Ka, sigma5, gamma_gransoil)
+  a4 = get_a4 (p, zbar, sigma5, gamma_gransoil, Kp, Ka)
+  l4 = get_l4(a1, a2, a3, a4)
+  sigma4 = get_sigma4(l4, Kp, Ka, sigma5, gamma_gransoil)
+  sigma3 = get_sigma3(l4, Kp, Ka, gamma_gransoil)
+  l5 = get_l5(sigma3, l4, p, sigma4)
+  Dtheor = get_Dtheor(l3, l4)
+  Dactual = get_Dactual(Dtheor)
+  Dactual_values.append(Dactual)
+
+# Plot Dactual vs phi
+plt.plot(phi_range, Dactual_values)
+plt.xlabel('Phi (degrees)')
+plt.ylabel('Embedment Depth (m)')
+plt.title('Embedment Depth vs Phi')
+plt.grid(True)
+plt.show()

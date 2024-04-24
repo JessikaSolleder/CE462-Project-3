@@ -1,5 +1,5 @@
 # CE462-Project-3
-Cantilever Walls
+Cantilever Walls: Project Memo
 
 This program will be completed in Python and aims to accomplish the following:
 
